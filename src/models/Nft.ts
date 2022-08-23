@@ -8,6 +8,7 @@ const nftSchema = new mongoose.Schema(
     image: { type: String, required: true },
     price: { type: Number, required: true },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
   },

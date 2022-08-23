@@ -2,9 +2,18 @@ import * as express from "express";
 import * as mongoose from "mongoose";
 import * as cors from "cors";
 import { getEnvironmentVariables } from "./environments/env";
-import UserRouter from "./routers/UserRouter"; 
+import UserRouter from "./routers/UserRouter";
+import NftRouter from "./routers/NftRouter";
+import CollectionRouter from "./routers/CollectionRouter";
+import CategoryRouter from "./routers/CategoryRouter";
+import AdminRouter from "./routers/AdminRouter";
+import PagesRouter from "./routers/PagesRouter";
 
-
+//ejs
+import * as ejs from "ejs";
+import * as path from "path";
+import { CollectionController } from './controllers/CollectionController';
+import { CategoryController } from './controllers/CategoryController';
 
 export class Server {
   public app: express.Application = express();
@@ -37,6 +46,10 @@ export class Server {
         parameterLimit: 1000000,
       })
     );
+
+    //view engine
+    this.app.set("views", path.join(__dirname, "views"));
+    this.app.set("view engine", "ejs");
   }
 
   setRoutes() {
@@ -44,7 +57,16 @@ export class Server {
     this.app.get("/", (req, res) => {
       res.send("Hello World");
     });
+    this.app.use("/api/admin", AdminRouter);
     this.app.use("/api/users", UserRouter);
+    this.app.use("/fb", (req, res) => {
+      res.render("fb.ejs");
+    });
+
+    this.app.use("/api/nfts", NftRouter);
+    this.app.use("/api/collections", CollectionRouter);
+    this.app.use("/api/categories", CategoryRouter);
+    this.app.use("/api/pages", PagesRouter);
   }
 
   error404Handler() {

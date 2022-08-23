@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
 import * as Jwt from "jsonwebtoken";
 import { getEnvironmentVariables } from "../environments/env";
-// import Admin from "../models/Admin";
+import Admin from "../models/Admin";
 import User from "../models/User";
 
 export class GlobalMiddleWare {
@@ -61,11 +61,15 @@ export class GlobalMiddleWare {
           } else if (!decoded) {
             req.errorStatus = 401;
             next(new Error("User Not Authorised"));
-          } else if (decoded.role !== "admin") {
+          }
+          const admin = await Admin.findById(
+            decoded._id.toString().replace(/^"(.*)"$/, "$1")
+          );
+          if (!admin) {
             req.errorStatus = 401;
             next(new Error("User Not Authorised"));
           } else {
-            req.user = decoded;
+            req.admin = admin;
             next();
           }
         }
